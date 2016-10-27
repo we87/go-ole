@@ -7,7 +7,7 @@ import (
 	"syscall"
 	"unsafe"
 
-	ole "github.com/go-ole/go-ole"
+	ole "github.com/we87/go-ole"
 )
 
 // ConnectObject creates a connection point between two services for communication.
@@ -23,12 +23,15 @@ func ConnectObject(disp *ole.IDispatch, iid *ole.GUID, idisp interface{}) (cooki
 	if err != nil {
 		return
 	}
+	defer container.Release()
+
 	if edisp, ok := idisp.(*ole.IUnknown); ok {
 		cookie, err = point.Advise(edisp)
 		container.Release()
 		if err != nil {
 			return
 		}
+		return
 	}
 	rv := reflect.ValueOf(disp).Elem()
 	if rv.Type().Kind() == reflect.Struct {
@@ -49,9 +52,8 @@ func ConnectObject(disp *ole.IDispatch, iid *ole.GUID, idisp interface{}) (cooki
 			point.Release()
 			return
 		}
+		return
 	}
-
-	container.Release()
 
 	return 0, ole.NewError(ole.E_INVALIDARG)
 }
