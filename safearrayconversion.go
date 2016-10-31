@@ -2,9 +2,7 @@
 
 package ole
 
-import (
-	"unsafe"
-)
+import "unsafe"
 
 type SafeArrayConversion struct {
 	Array *SafeArray
@@ -91,6 +89,12 @@ func (sac *SafeArrayConversion) ToValueArray() (values []interface{}) {
 			var v VARIANT
 			safeArrayGetElement(sac.Array, int64(i), unsafe.Pointer(&v))
 			values[i] = v.Value()
+		case VT_DATE:
+			var v float64
+			date, err := GetVariantDate(v)
+			if err == nil {
+				values[i] = date
+			}
 		default:
 			// TODO
 		}
