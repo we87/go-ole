@@ -82,8 +82,7 @@ func (sac *SafeArrayConversion) ToValueArray() (values []interface{}) {
 			safeArrayGetElement(sac.Array, int64(i), unsafe.Pointer(&v))
 			values[i] = v
 		case VT_BSTR:
-			var v string
-			safeArrayGetElement(sac.Array, int64(i), unsafe.Pointer(&v))
+			v, _ := safeArrayGetElementString(sac.Array, int64(i))
 			values[i] = v
 		case VT_VARIANT:
 			var v VARIANT
